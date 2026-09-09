@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bente</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="background-placeholder"></div>
+
+    <!-- ============================================
+         Startbildschirm
+
+         Die Themenkacheln stehen nicht im HTML - sie werden aus
+         dem Register "themen" in script.js erzeugt, nach Gruppen
+         sortiert. Neues Thema = neuer Eintrag dort.
+         ============================================ -->
+    <div id="startScreen" class="screen active">
+        <div class="content">
+            <h1 class="main-title">Bente</h1>
+            <div class="module-intro">
+                <span class="module-kicker">Deine Rechenwerkstatt</span>
+                <p>Wähle ein Thema und übe in deinem Tempo oder gegen die Uhr.</p>
+            </div>
+
+            <section class="module-group">
+                <div class="module-group-heading">
+                    <span class="group-icon">✖️</span>
+                    <div><h2>Malnehmen und Teilen</h2><p>Das kleine Einmaleins und seine Umkehrung.</p></div>
+                </div>
+                <div id="gruppeMalGeteilt" class="button-grid"></div>
+            </section>
+
+            <section class="module-group">
+                <div class="module-group-heading">
+                    <span class="group-icon">±</span>
+                    <div><h2>Plus und Minus bis 100</h2><p>Erst ohne, dann mit Zehnerübergang.</p></div>
+                </div>
+                <div id="gruppePlusMinus" class="button-grid"></div>
+            </section>
+
+            <section class="module-group">
+                <div class="module-group-heading">
+                    <span class="group-icon">🧩</span>
+                    <div><h2>Knobeln</h2><p>Texte lesen und die richtige Reihenfolge beachten.</p></div>
+                </div>
+                <div id="gruppeKnobeln" class="button-grid"></div>
+            </section>
+
+            <section class="module-group">
+                <div class="module-group-heading">
+                    <span class="group-icon">🏆</span>
+                    <div><h2>Herausforderungen</h2><p>Alles gemischt oder 100 Aufgaben am Stück.</p></div>
+                </div>
+                <div class="button-grid">
+                    <button class="operation-btn farbe-gemischt" onclick="startGemischt()">
+                        <span class="emoji">🎲</span>
+                        <span class="text">Gemischt üben</span>
+                        <span class="card-hint">Alle Themen, 15 Minuten</span>
+                    </button>
+                    <button class="operation-btn farbe-challenge" onclick="startChallenge('einmaleins')">
+                        <span class="emoji">✖️ 💯</span>
+                        <span class="text">1×1: 100 Aufgaben</span>
+                        <span class="card-hint">Auf Zeit, höchstens 20 Minuten</span>
+                    </button>
+                    <button class="operation-btn farbe-challenge" onclick="startChallenge('geteilt')">
+                        <span class="emoji">➗ 💯</span>
+                        <span class="text">1:1: 100 Aufgaben</span>
+                        <span class="card-hint">Auf Zeit, höchstens 20 Minuten</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Reihen wählen (nur beim 1x1 und beim Teilen)
+         ============================================ -->
+    <div id="reihenScreen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="showScreen('startScreen')"><span class="arrow">←</span> Zurück</button>
+        </div>
+        <div class="content">
+            <div class="auswahl-karte">
+                <h2 class="exercise-title" id="reihenTitel">Welche Reihen?</h2>
+                <p class="description">Tippe an, was drankommen soll. Mehrere gehen auch.</p>
+                <div id="reihenGrid" class="reihen-grid"></div>
+                <div class="button-area">
+                    <button class="check-btn hell" onclick="alleReihen(true)">Alle</button>
+                    <button class="check-btn hell" onclick="alleReihen(false)">Keine</button>
+                    <button class="check-btn haupt" id="reihenWeiter" onclick="reihenWeiter()">Weiter →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Wie üben? (Zeitlimit oder eigenes Tempo)
+         ============================================ -->
+    <div id="modusScreen" class="screen">
+        <div class="header">
+            <button class="back-btn" onclick="zurueckVonModus()"><span class="arrow">←</span> Zurück</button>
+        </div>
+        <div class="content">
+            <div class="auswahl-karte">
+                <h2 class="exercise-title" id="modusTitel">Wie möchtest du üben?</h2>
+                <p class="description">Gegen die Uhr oder ganz in Ruhe?</p>
+                <div class="button-grid schmal">
+                    <button class="operation-btn farbe-zeit" onclick="startEinzeln(true)">
+                        <span class="emoji">⏱️</span>
+                        <span class="text">Mit Zeitlimit</span>
+                        <span class="card-hint">5 Minuten</span>
+                    </button>
+                    <button class="operation-btn farbe-ruhe" onclick="startEinzeln(false)">
+                        <span class="emoji">🌿</span>
+                        <span class="text">In deinem Tempo</span>
+                        <span class="card-hint">Ohne Uhr, du sagst wann Schluss ist</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Die Übung
+         ============================================ -->
+    <div id="spielScreen" class="screen exercise-screen">
+        <div class="header">
+            <button class="back-btn" onclick="showScreen('startScreen')"><span class="arrow">←</span> Zurück</button>
+            <div class="timer-display" id="spielTimer">⏰ 5:00</div>
+            <div class="progress" id="spielFortschritt">richtig: <span id="spielRichtig">0</span>/<span id="spielGesamt">0</span></div>
+        </div>
+
+        <div class="content">
+            <h2 class="exercise-title" id="spielTitel">Übung</h2>
+
+            <div class="task-area">
+                <!-- Sachaufgaben brauchen Platz zum Lesen -->
+                <p class="sachtext" id="spielText" hidden></p>
+
+                <div class="frage" id="spielFrage">Bereit?</div>
+
+                <div class="input-zeile">
+                    <div class="input-feld" id="feldAntwortBox">
+                        <label for="feldAntwort" id="labelAntwort">Ergebnis</label>
+                        <input type="number" id="feldAntwort" inputmode="numeric" autocomplete="off" onfocus="setzeAktivesFeld('antwort')">
+                    </div>
+                    <div class="input-feld" id="feldRestBox" hidden>
+                        <label for="feldRest">Rest</label>
+                        <input type="number" id="feldRest" inputmode="numeric" autocomplete="off" onfocus="setzeAktivesFeld('rest')">
+                    </div>
+                    <button class="enter-btn" onclick="pruefeAntwort()" aria-label="Antwort prüfen">↵</button>
+                </div>
+
+                <div class="hinweis" id="spielHinweis"></div>
+            </div>
+
+            <!-- Lerncoach: steht nur bei den Themen mit Zehnerübergang -->
+            <div id="coachPanel" class="coach-panel" hidden>
+                <div class="coach-avatar">🧑‍🏫</div>
+                <div class="coach-body">
+                    <div class="coach-message" id="coachMessage"></div>
+                    <div class="coach-note-box">
+                        <label for="coachNotiz">Zwischenergebnis notieren</label>
+                        <input id="coachNotiz" type="text" autocomplete="off" placeholder="z. B. 27 + 3 = 30">
+                    </div>
+                    <div class="coach-controls">
+                        <button class="coach-btn" onclick="lesVorAusElement(document.getElementById('coachMessage'))" aria-label="Vorlesen" title="Vorlesen">🔊</button>
+                        <button class="coach-btn" onclick="coachZurueck()">← Zurück</button>
+                        <button class="coach-btn" onclick="coachAntwort()">Tipp zeigen</button>
+                        <button class="coach-btn haupt" onclick="coachWeiter()">Weiter →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="numpad">
+                <button onclick="addDigit(1)">1</button>
+                <button onclick="addDigit(2)">2</button>
+                <button onclick="addDigit(3)">3</button>
+                <button onclick="addDigit(4)">4</button>
+                <button onclick="addDigit(5)">5</button>
+                <button onclick="addDigit(6)">6</button>
+                <button onclick="addDigit(7)">7</button>
+                <button onclick="addDigit(8)">8</button>
+                <button onclick="addDigit(9)">9</button>
+                <button class="numpad-action" onclick="deleteDigit()">⌫</button>
+                <button onclick="addDigit(0)">0</button>
+                <button class="numpad-action" onclick="pruefeAntwort()">↵</button>
+            </div>
+
+            <div class="game-footer">
+                <button class="tool-btn" id="coachToggle" onclick="toggleCoach()" hidden>🧑‍🏫 Lerncoach</button>
+                <button class="tool-btn" id="fertigBtn" onclick="endeRunde()" hidden>✓ Fertig für heute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Ergebnis
+         ============================================ -->
+    <div id="ergebnisScreen" class="screen">
+        <div class="content" style="text-align:center;">
+            <div class="result-card">
+                <h2 class="exercise-title" id="ergebnisTitel">Runde beendet!</h2>
+                <p class="result-line">Du hast <strong id="ergebnisRichtig">0</strong> von <strong id="ergebnisGesamt">0</strong> richtig gelöst!</p>
+                <div class="result-details">
+                    <span>⏱️ Gebraucht: <strong id="ergebnisZeit">–</strong></span>
+                    <span>🧑‍🏫 Mit Coach: <strong id="ergebnisCoach">0</strong></span>
+                </div>
+                <div class="stars" id="ergebnisSterne">☆☆☆☆☆</div>
+                <p class="result-lob" id="ergebnisLob"></p>
+            </div>
+            <div class="button-area">
+                <button class="check-btn haupt" onclick="nochEinmal()">🔄 Noch einmal</button>
+                <button class="back-btn" onclick="showScreen('startScreen')">Zur Übersicht</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

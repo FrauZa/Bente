@@ -1,0 +1,284 @@
+/* ============================================
+   Bente - Farben und Grundlagen
+
+   Jede Themengruppe hat ihre eigene Farbe. Die Kacheln ziehen
+   sie ueber die Klassen .farbe-* aus dem Themen-Register.
+   ============================================ */
+:root {
+    --mal: #42A5F5;          /* Malnehmen und Teilen - blau  */
+    --mal-dunkel: #1E88E5;
+    --plus: #66BB6A;         /* Plus und Minus       - gruen */
+    --plus-dunkel: #43A047;
+    --uebergang: #9C27B0;    /* mit Zehneruebergang  - lila  */
+    --uebergang-dunkel: #7B1FA2;
+    --knobeln: #FF9800;      /* Knobeln              - orange*/
+    --knobeln-dunkel: #F57C00;
+    --herausforderung: #EC407A; /* Herausforderungen - pink  */
+
+    --akzent: #F57C00;
+    --text: #333;
+    --bg: #f5f5f5;
+    --weiss: #ffffff;
+    --shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    --shadow-hover: 0 6px 20px rgba(0, 0, 0, .2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Outfit', 'Comic Sans MS', cursive, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    overflow-x: hidden;
+}
+
+.background-placeholder {
+    position: fixed; inset: 0;
+    background-image: url('background.jpg');
+    background-size: cover; background-position: center;
+    opacity: .85; z-index: -1;
+}
+
+/* ============================================
+   Bildschirme: sichtbar ist nur .active
+   ============================================ */
+.screen { display: none; min-height: 100vh; padding: 20px; }
+.screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.exercise-screen.active { justify-content: flex-start; padding-top: 16px; }
+
+.content { position: relative; z-index: 1; max-width: 900px; width: 100%; }
+
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; max-width: 900px; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+}
+
+.main-title {
+    font-size: 3.4rem; font-weight: 700; color: var(--weiss);
+    text-align: center; margin-bottom: 6px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, .35);
+}
+
+.module-intro { text-align: center; color: #fff; margin-bottom: 26px; text-shadow: 0 2px 6px rgba(0,0,0,.35); }
+.module-kicker { display: inline-block; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+
+/* ============================================
+   Startbildschirm: Gruppen und Kacheln
+   ============================================ */
+.module-group { margin-bottom: 26px; }
+.module-group-heading {
+    display: flex; align-items: center; gap: 14px; margin: 0 20px 2px;
+    color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,.35);
+}
+.module-group-heading .group-icon { font-size: 1.7rem; }
+.module-group-heading h2 { font-size: 1.4rem; }
+.module-group-heading p { color: rgba(255,255,255,.9); margin-top: 2px; font-size: .95rem; }
+
+.button-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 16px 20px; }
+.button-grid.schmal { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+.operation-btn {
+    min-height: 135px; border: none; border-radius: 20px;
+    font-family: inherit; font-size: 1.2rem; font-weight: 600;
+    color: #fff; cursor: pointer; padding: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s;
+}
+.operation-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.operation-btn .emoji { font-size: 2.3rem; }
+.card-hint { font-size: .76rem; font-weight: 400; opacity: .92; }
+
+/* Themenfarben */
+.farbe-mal        { background: linear-gradient(135deg, var(--mal), #90CAF9); }
+.farbe-geteilt    { background: linear-gradient(135deg, var(--mal-dunkel), #64B5F6); }
+.farbe-rest       { background: linear-gradient(135deg, #0288D1, #4FC3F7); }
+.farbe-plus       { background: linear-gradient(135deg, var(--plus), #A5D6A7); }
+.farbe-minus      { background: linear-gradient(135deg, var(--plus-dunkel), #81C784); }
+.farbe-plus-zue   { background: linear-gradient(135deg, var(--uebergang), #CE93D8); }
+.farbe-minus-zue  { background: linear-gradient(135deg, var(--uebergang-dunkel), #BA68C8); }
+.farbe-sach       { background: linear-gradient(135deg, var(--knobeln), #FFCC80); }
+.farbe-punkt      { background: linear-gradient(135deg, var(--knobeln-dunkel), #FFB74D); }
+.farbe-gemischt   { background: linear-gradient(135deg, var(--herausforderung), #F48FB1); }
+.farbe-challenge  { background: linear-gradient(135deg, #AD1457, #EC407A); }
+.farbe-zeit       { background: linear-gradient(135deg, #5C6BC0, #9FA8DA); }
+.farbe-ruhe       { background: linear-gradient(135deg, #26A69A, #80CBC4); }
+
+/* ============================================
+   Auswahlkarten (Reihen, Übungsart)
+   ============================================ */
+.auswahl-karte {
+    background: rgba(255,255,255,.96); border-radius: 24px;
+    padding: 32px 28px; box-shadow: var(--shadow);
+}
+.exercise-title { font-size: 1.9rem; text-align: center; margin-bottom: 6px; color: #263238; }
+.description { text-align: center; color: #666; margin-bottom: 18px; }
+
+.reihen-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 12px; max-width: 420px; margin: 0 auto;
+}
+.reihen-btn {
+    font-family: inherit; font-size: 1.6rem; font-weight: 700;
+    padding: 16px 0; border: 3px solid #e0e0e0; border-radius: 16px;
+    background: #fff; color: #90A4AE; cursor: pointer; transition: all .15s;
+}
+.reihen-btn.an { border-color: var(--mal); background: var(--mal); color: #fff; }
+.reihen-btn:hover { transform: translateY(-2px); }
+
+.button-area { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+
+.check-btn {
+    font-family: inherit; font-size: 1.1rem; font-weight: 600;
+    padding: 13px 24px; border: none; border-radius: 14px;
+    background: var(--weiss); cursor: pointer; box-shadow: var(--shadow);
+}
+.check-btn.haupt { background: var(--akzent); color: #fff; }
+.check-btn.hell { background: #ECEFF1; color: #37474F; }
+.check-btn:disabled { opacity: .45; cursor: default; }
+.check-btn:hover:enabled { box-shadow: var(--shadow-hover); }
+
+.back-btn {
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    padding: 10px 18px; border: none; border-radius: 12px;
+    background: rgba(255,255,255,.92); cursor: pointer; box-shadow: var(--shadow);
+}
+.back-btn .arrow { margin-right: 6px; }
+
+/* ============================================
+   Übungsbildschirm
+   ============================================ */
+.timer-display, .progress {
+    background: rgba(255,255,255,.92); border-radius: 12px;
+    padding: 8px 16px; font-weight: 700; box-shadow: var(--shadow);
+}
+.timer-display.knapp { background: #FFCDD2; color: #B71C1C; }
+
+.task-area {
+    background: rgba(255,255,255,.96); border-radius: 22px;
+    padding: 26px 22px; box-shadow: var(--shadow); text-align: center;
+}
+
+/* Sachaufgaben: linksbündig und ruhiger Zeilenabstand - Text zum
+   Lesen, nicht zum Anstarren. */
+.sachtext {
+    text-align: left; font-size: 1.25rem; line-height: 1.6;
+    background: #FFF8E1; border-left: 6px solid var(--knobeln);
+    border-radius: 12px; padding: 16px 18px; margin-bottom: 20px;
+}
+.sachtext[hidden] { display: none; }
+
+.frage { font-size: clamp(2.4rem, 8vw, 3.4rem); font-weight: 700; margin-bottom: 20px; }
+
+.input-zeile { display: flex; gap: 14px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
+.input-feld { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.input-feld[hidden] { display: none; }
+.input-feld label { font-size: .85rem; color: #78909C; font-weight: 600; }
+.input-feld input {
+    width: 130px; font-family: inherit; font-size: 2.2rem; text-align: center;
+    border: 3px solid #ddd; border-radius: 14px; padding: 6px;
+}
+.input-feld.aktiv input { border-color: var(--akzent); }
+.input-feld input.richtig { border-color: #2E7D32; background: #C8E6C9; }
+.input-feld input.falsch { border-color: #C62828; background: #FFCDD2; }
+/* Die Pfeilchen des Zahlenfeldes stoeren auf dem Tablet nur */
+.input-feld input::-webkit-outer-spin-button,
+.input-feld input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.input-feld input { -moz-appearance: textfield; }
+
+.enter-btn {
+    font-size: 1.7rem; padding: 10px 20px; border: none; border-radius: 14px;
+    background: var(--akzent); color: #fff; cursor: pointer; box-shadow: var(--shadow);
+}
+
+.hinweis { min-height: 30px; margin-top: 14px; color: #D84315; font-weight: 600; font-size: 1.05rem; }
+
+.numpad {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    max-width: 330px; margin: 20px auto 0;
+}
+.numpad button {
+    font-family: inherit; font-size: 1.7rem; font-weight: 700;
+    padding: 14px 0; border: none; border-radius: 14px;
+    background: rgba(255,255,255,.96); cursor: pointer; box-shadow: var(--shadow);
+}
+.numpad button:active { transform: scale(.95); }
+.numpad .numpad-action { background: var(--akzent); color: #fff; }
+
+.game-footer { display: flex; justify-content: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+.tool-btn {
+    font-family: inherit; font-size: 1rem; padding: 10px 20px;
+    border: 2px solid transparent; border-radius: 12px;
+    background: rgba(255,255,255,.92); cursor: pointer; box-shadow: var(--shadow);
+}
+.tool-btn[hidden] { display: none; }
+.tool-btn.an { border-color: var(--uebergang); background: #F3E5F5; }
+
+/* ============================================
+   Lerncoach
+   ============================================ */
+.coach-panel {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: #F3E5F5; border-radius: 18px;
+    padding: 16px 18px; margin-top: 18px; text-align: left;
+}
+.coach-panel[hidden] { display: none; }
+.coach-avatar { font-size: 2rem; }
+.coach-body { flex: 1; }
+.coach-message { font-size: 1.1rem; line-height: 1.55; }
+.coach-message em { color: #6A1B9A; font-style: normal; font-weight: 600; }
+.coach-note-box {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: 12px; padding: 10px 12px; border-radius: 12px;
+    background: rgba(255,255,255,.7); border: 1px dashed #B39DDB;
+}
+.coach-note-box label {
+    font-size: .8rem; font-weight: 700; color: #5E35B1; letter-spacing: .03em;
+    text-transform: uppercase;
+}
+.coach-note-box input {
+    width: 100%; font-family: inherit; font-size: 1rem; border: 1px solid #D1C4E9;
+    border-radius: 10px; padding: 9px 10px; background: #fff;
+}
+.coach-controls { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.coach-btn {
+    font-family: inherit; font-size: .95rem; border: none; border-radius: 10px;
+    padding: 8px 14px; cursor: pointer; background: #fff; box-shadow: var(--shadow);
+}
+.coach-btn.haupt { background: var(--uebergang); color: #fff; }
+
+/* ============================================
+   Ergebnis
+   ============================================ */
+.result-card {
+    background: rgba(255,255,255,.96); border-radius: 24px;
+    padding: 34px 28px; box-shadow: var(--shadow);
+}
+.result-line { font-size: 1.35rem; margin: 12px 0; }
+.result-line strong { color: var(--akzent); font-size: 2.4rem; }
+.result-details {
+    display: flex; gap: 26px; justify-content: center; margin-top: 16px;
+    flex-wrap: wrap; color: #546E7A;
+}
+.stars { font-size: 2.8rem; color: gold; margin-top: 16px; letter-spacing: 4px; }
+.result-lob { margin-top: 10px; font-size: 1.2rem; color: #455A64; }
+
+/* ============================================
+   Kleine Bildschirme
+   ============================================ */
+@media (max-width: 900px) {
+    .button-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+    .main-title { font-size: 2.4rem; }
+    .button-grid { grid-template-columns: 1fr; gap: 14px; }
+    .reihen-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .reihen-btn { font-size: 1.3rem; padding: 12px 0; }
+    .auswahl-karte { padding: 22px 18px; }
+    .sachtext { font-size: 1.1rem; }
+    .header { gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
