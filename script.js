@@ -97,6 +97,30 @@ function waehle(liste) { return liste[Math.floor(Math.random() * liste.length)];
      coach(aufgabe)      - Schritte des Lerncoaches, sonst nicht gesetzt
    ============================================================ */
 
+/* Die Schritte des Lerncoaches sind bei allen Aufgaben mit
+   Zehneruebergang dieselben - ob einstellig oder zweistellig
+   dazukommt, aendert am Weg nichts. Darum stehen sie hier einmal
+   und werden von vier Themen benutzt. */
+function coachPlusUebergang(aufgabe) {
+    const [a, b] = aufgabe.frage.split(' + ').map(Number);
+    const bis = 10 - (a % 10);
+    return [
+        { frage: `Wie viele fehlen von ${a} bis zum nächsten vollen Zehner?`, antwort: `Es fehlen ${bis}. Dann bist du bei ${a + bis}.`, notiz: `${a} + ${bis} = ${a + bis}` },
+        { frage: `Teile die ${b} auf: ${bis} und wie viel bleibt übrig?`, antwort: `${bis} und ${b - bis}.`, notiz: `${bis} + ${b - bis} = ${b}` },
+        { frage: `Jetzt rechne ${a + bis} + ${b - bis}.`, antwort: `Das sind ${a + b}.`, notiz: `${a + bis} + ${b - bis} = ${a + b}` }
+    ];
+}
+
+function coachMinusUebergang(aufgabe) {
+    const [a, b] = aufgabe.frage.split(' − ').map(Number);
+    const zurueck = a % 10;
+    return [
+        { frage: `Wie weit ist es von ${a} zurück zum vollen Zehner?`, antwort: `${zurueck} zurück, dann stehst du auf ${a - zurueck}.`, notiz: `${a} - ${zurueck} = ${a - zurueck}` },
+        { frage: `Teile die ${b} auf: ${zurueck} und wie viel bleibt übrig?`, antwort: `${zurueck} und ${b - zurueck}.`, notiz: `${zurueck} + ${b - zurueck} = ${b}` },
+        { frage: `Jetzt rechne ${a - zurueck} − ${b - zurueck}.`, antwort: `Das sind ${a - b}.`, notiz: `${a - zurueck} - ${b - zurueck} = ${a - b}` }
+    ];
+}
+
 const themen = {
 
     /* ---------- Malnehmen und Teilen ---------- */
@@ -194,8 +218,49 @@ const themen = {
         }
     },
 
+    plusZueEiner: {
+        titel: 'Plus über den Zehner', emoji: '➕ ↗', hint: 'einstellig dazu, z. B. 27 + 8',
+        gruppe: 'gruppePlusMinus', farbe: 'farbe-plus-zue-eins',
+        reihen: null,
+        aufgabe: () => {
+            /* Zweistellig + einstellig, und die Einer zusammen sind mehr
+               als 10. Genau 10 waere kein Uebergang, sondern nur das
+               Ergaenzen zum Zehner - darum beginnt e1 erst bei 2. */
+            const e1 = z(2, 9);
+            const b = z(11 - e1, 9);
+            const a = z(1, 8) * 10 + e1;
+            const bisZehner = 10 - e1;
+            return {
+                frage: `${a} + ${b}`,
+                antwort: a + b,
+                hinweis: `Rechne erst bis zum vollen Zehner: ${a} + ${bisZehner} = ${a + bisZehner}.`
+            };
+        },
+        coach: coachPlusUebergang
+    },
+
+    minusZueEiner: {
+        titel: 'Minus über den Zehner', emoji: '➖ ↘', hint: 'einstellig weg, z. B. 62 − 7',
+        gruppe: 'gruppePlusMinus', farbe: 'farbe-minus-zue-eins',
+        reihen: null,
+        aufgabe: () => {
+            /* Zweistellig − einstellig, und der Einer oben ist kleiner
+               als die Zahl, die weggeht - nur dann muss man ueber den
+               Zehner zurueck. */
+            const e1 = z(1, 8);
+            const b = z(e1 + 1, 9);
+            const a = z(1, 9) * 10 + e1;
+            return {
+                frage: `${a} − ${b}`,
+                antwort: a - b,
+                hinweis: `Rechne erst bis zum vollen Zehner zurück: ${a} − ${e1} = ${a - e1}.`
+            };
+        },
+        coach: coachMinusUebergang
+    },
+
     plusZue: {
-        titel: 'Plus mit Übergang', emoji: '➕ ↗', hint: 'über den Zehner',
+        titel: 'Plus mit Übergang', emoji: '➕ ↗', hint: 'zweistellig dazu, z. B. 27 + 38',
         gruppe: 'gruppePlusMinus', farbe: 'farbe-plus-zue',
         reihen: null,
         aufgabe: () => {
@@ -213,19 +278,11 @@ const themen = {
                 hinweis: `Rechne erst bis zum vollen Zehner: ${a} + ${bisZehner} = ${a + bisZehner}.`
             };
         },
-        coach: aufgabe => {
-            const [a, b] = aufgabe.frage.split(' + ').map(Number);
-            const bis = 10 - (a % 10);
-            return [
-                { frage: `Wie viele fehlen von ${a} bis zum nächsten vollen Zehner?`, antwort: `Es fehlen ${bis}. Dann bist du bei ${a + bis}.`, notiz: `${a} + ${bis} = ${a + bis}` },
-                { frage: `Teile die ${b} auf: ${bis} und wie viel bleibt übrig?`, antwort: `${bis} und ${b - bis}.`, notiz: `${bis} + ${b - bis} = ${b}` },
-                { frage: `Jetzt rechne ${a + bis} + ${b - bis}.`, antwort: `Das sind ${a + b}.`, notiz: `${a + bis} + ${b - bis} = ${a + b}` }
-            ];
-        }
+        coach: coachPlusUebergang
     },
 
     minusZue: {
-        titel: 'Minus mit Übergang', emoji: '➖ ↘', hint: 'unter den Zehner',
+        titel: 'Minus mit Übergang', emoji: '➖ ↘', hint: 'zweistellig weg, z. B. 62 − 37',
         gruppe: 'gruppePlusMinus', farbe: 'farbe-minus-zue',
         reihen: null,
         aufgabe: () => {
@@ -242,15 +299,7 @@ const themen = {
                 hinweis: `Rechne erst bis zum vollen Zehner zurück: ${a} − ${e1} = ${a - e1}.`
             };
         },
-        coach: aufgabe => {
-            const [a, b] = aufgabe.frage.split(' − ').map(Number);
-            const zurueck = a % 10;
-            return [
-                { frage: `Wie weit ist es von ${a} zurück zum vollen Zehner?`, antwort: `${zurueck} zurück, dann stehst du auf ${a - zurueck}.`, notiz: `${a} - ${zurueck} = ${a - zurueck}` },
-                { frage: `Teile die ${b} auf: ${zurueck} und wie viel bleibt übrig?`, antwort: `${zurueck} und ${b - zurueck}.`, notiz: `${zurueck} + ${b - zurueck} = ${b}` },
-                { frage: `Jetzt rechne ${a - zurueck} − ${b - zurueck}.`, antwort: `Das sind ${a - b}.`, notiz: `${a - zurueck} - ${b - zurueck} = ${a - b}` }
-            ];
-        }
+        coach: coachMinusUebergang
     },
 
     /* ---------- Knobeln ---------- */
@@ -430,7 +479,7 @@ const sachaufgabenVorlagen = [
 /* Reihenfolge der Kacheln je Gruppe. */
 const gruppenReihenfolge = {
     gruppeMalGeteilt: ['einmaleins', 'geteilt', 'geteiltRest'],
-    gruppePlusMinus: ['plus100', 'minus100', 'plusZue', 'minusZue'],
+    gruppePlusMinus: ['plus100', 'minus100', 'plusZueEiner', 'minusZueEiner', 'plusZue', 'minusZue'],
     gruppeKnobeln: ['sachaufgaben', 'punktVorStrich']
 };
 
