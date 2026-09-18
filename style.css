@@ -168,6 +168,8 @@ body {
 .sachtext[hidden] { display: none; }
 
 .frage { font-size: clamp(2.4rem, 8vw, 3.4rem); font-weight: 700; margin-bottom: 20px; }
+/* Sachaufgaben zeigen keine Rechnung - dann faellt die Zeile ganz weg. */
+.frage[hidden] { display: none; }
 
 .input-zeile { display: flex; gap: 14px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
 .input-feld { display: flex; flex-direction: column; align-items: center; gap: 4px; }

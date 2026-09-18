@@ -88,9 +88,12 @@ function waehle(liste) { return liste[Math.floor(Math.random() * liste.length)];
      farbe               - CSS-Klasse für die Kachelfarbe
      reihen              - Bereich der wählbaren Reihen, sonst null
      aufgabe(reihen)     - erzeugt EINE Aufgabe:
-                           { frage, text?, antwort, rest?, hinweis }
-                           text  = Sachaufgabe zum Lesen
-                           rest  = zweites Eingabefeld erscheint
+                           { frage?, text?, antwort, rest?, rechnung?, hinweis }
+                           frage    = die Rechnung; fehlt sie, bleibt die
+                                      Zeile leer (Sachaufgaben)
+                           text     = Sachaufgabe zum Lesen
+                           rest     = zweites Eingabefeld erscheint
+                           rechnung = Lösungsweg, erst bei der Auflösung
      coach(aufgabe)      - Schritte des Lerncoaches, sonst nicht gesetzt
    ============================================================ */
 
@@ -300,13 +303,19 @@ const themen = {
 
 /* Die Sachaufgaben. Jede Vorlage würfelt ihre eigenen Zahlen, damit
    sie nicht beim zweiten Mal gleich aussieht. Aufgaben mit Rest
-   liefern zusätzlich "rest" - dann erscheint das zweite Feld. */
+   liefern zusätzlich "rest" - dann erscheint das zweite Feld.
+
+   Hier steht absichtlich kein "frage": Die Kinder sollen die Rechnung
+   selbst aus der Situation herauslesen. Sie steht nur in "rechnung"
+   und wird erst gezeigt, wenn die Aufgabe aufgelöst wird. Plus und
+   Minus bleiben deshalb bei zweistellig +/- einstellig - geübt wird
+   das Übersetzen, nicht das Rechnen. */
 const sachaufgabenVorlagen = [
     () => {
         const paeckchen = z(3, 9), proPaeckchen = z(4, 9);
         return {
             text: `Bente kauft ${paeckchen} Päckchen Sticker. In jedem Päckchen sind ${proPaeckchen} Sticker. Wie viele Sticker hat er?`,
-            frage: `${paeckchen} · ${proPaeckchen}`,
+            rechnung: `${paeckchen} · ${proPaeckchen}`,
             antwort: paeckchen * proPaeckchen,
             hinweis: `${paeckchen} Päckchen mit je ${proPaeckchen} Stickern: Das ist eine Malaufgabe.`
         };
@@ -315,7 +324,7 @@ const sachaufgabenVorlagen = [
         const kinder = z(3, 8), proKind = z(3, 9);
         return {
             text: `Bente verteilt ${kinder * proKind} Gummibärchen gerecht an ${kinder} Kinder. Wie viele bekommt jedes Kind?`,
-            frage: `${kinder * proKind} : ${kinder}`,
+            rechnung: `${kinder * proKind} : ${kinder}`,
             antwort: proKind,
             hinweis: `Gerecht verteilen heißt teilen: ${kinder * proKind} : ${kinder}.`
         };
@@ -325,7 +334,7 @@ const sachaufgabenVorlagen = [
         const perlen = ketten * proKette + rest;
         return {
             text: `Bente hat ${perlen} Perlen. Für eine Kette braucht er ${proKette} Perlen. Wie viele Ketten werden fertig und wie viele Perlen bleiben übrig?`,
-            frage: `${perlen} : ${proKette}`,
+            rechnung: `${perlen} : ${proKette}`,
             antwort: ketten,
             rest: rest,
             hinweis: `Wie oft passt die ${proKette} in die ${perlen}? Was übrig bleibt, ist der Rest.`
@@ -336,35 +345,35 @@ const sachaufgabenVorlagen = [
         const kekse = tueten * proTuete + rest;
         return {
             text: `Bente backt ${kekse} Kekse und packt immer ${proTuete} Kekse in eine Tüte. Wie viele Tüten werden voll und wie viele Kekse bleiben übrig?`,
-            frage: `${kekse} : ${proTuete}`,
+            rechnung: `${kekse} : ${proTuete}`,
             antwort: tueten,
             rest: rest,
             hinweis: `Teile ${kekse} durch ${proTuete}. Was nicht mehr reicht, bleibt übrig.`
         };
     },
     () => {
-        const bente = z(21, 58), bruder = z(15, 39);
+        const bente = z(21, 58), bruder = z(2, 9);
         return {
             text: `Bente sammelt ${bente} Kastanien, sein Bruder sammelt ${bruder}. Wie viele haben die beiden zusammen?`,
-            frage: `${bente} + ${bruder}`,
+            rechnung: `${bente} + ${bruder}`,
             antwort: bente + bruder,
             hinweis: `"Zusammen" heißt: dazurechnen.`
         };
     },
     () => {
-        const start = z(55, 98), ausgabe = z(12, 45);
+        const start = z(21, 98), ausgabe = z(2, 9);
         return {
-            text: `Bente hat ${start} Cent im Portemonnaie und kauft einen Radiergummi für ${ausgabe} Cent. Wie viel Geld bleibt ihm?`,
-            frage: `${start} − ${ausgabe}`,
+            text: `Bente hat ${start} Cent im Portemonnaie und kauft ein Bonbon für ${ausgabe} Cent. Wie viel Geld bleibt ihm?`,
+            rechnung: `${start} − ${ausgabe}`,
             antwort: start - ausgabe,
             hinweis: `Was übrig bleibt, rechnest du mit Minus aus.`
         };
     },
     () => {
-        const baenke = z(3, 7), proBank = z(3, 8), extra = z(4, 15);
+        const baenke = z(3, 7), proBank = z(3, 8), extra = z(2, 9);
         return {
             text: `Auf dem Schulhof stehen ${baenke} Bänke. Auf jeder Bank sitzen ${proBank} Kinder. ${extra} Kinder stehen daneben. Wie viele Kinder sind das zusammen?`,
-            frage: `${baenke} · ${proBank} + ${extra}`,
+            rechnung: `${baenke} · ${proBank} + ${extra}`,
             antwort: baenke * proBank + extra,
             hinweis: `Punkt vor Strich: erst die Kinder auf den Bänken, dann die anderen dazu.`
         };
@@ -373,7 +382,7 @@ const sachaufgabenVorlagen = [
         const reihen = z(3, 9), proReihe = z(3, 9);
         return {
             text: `In Bentes Eierkarton liegen ${reihen} Reihen mit je ${proReihe} Eiern. Wie viele Eier sind es?`,
-            frage: `${reihen} · ${proReihe}`,
+            rechnung: `${reihen} · ${proReihe}`,
             antwort: reihen * proReihe,
             hinweis: `Reihen mal Anzahl je Reihe.`
         };
@@ -381,14 +390,28 @@ const sachaufgabenVorlagen = [
     () => {
         const seiten = z(4, 9), proSeite = z(4, 9);
         const gesamt = seiten * proSeite;
-        /* Es duerfen nie mehr Bilder eingeklebt sein als hineinpassen -
-           sonst waere das Ergebnis negativ. */
-        const gelesen = z(5, gesamt - 5);
+        /* Einstellig: der Fokus liegt auf dem Aufstellen der Rechnung,
+           nicht auf dem Rechnen. Es passen immer mindestens 16 Bilder
+           hinein, das Ergebnis wird also nie negativ. */
+        const gelesen = z(2, 9);
         return {
             text: `Bentes Sammelalbum hat ${seiten} Seiten mit je ${proSeite} Bildern. ${gelesen} Bilder hat er schon eingeklebt. Wie viele fehlen noch?`,
-            frage: `${seiten} · ${proSeite} − ${gelesen}`,
+            rechnung: `${seiten} · ${proSeite} − ${gelesen}`,
             antwort: gesamt - gelesen,
             hinweis: `Erst ausrechnen, wie viele Bilder hineinpassen: ${seiten} · ${proSeite} = ${gesamt}.`
+        };
+    },
+    /* Aufrunden: 23 : 5 = 4 Rest 3, aber die letzten 3 Kinder brauchen
+       noch eine Fahrt. Die Antwort ist darum eine mehr als der Quotient.
+       Deshalb hat diese Vorlage auch keine "rechnung" - "23 : 5 = 5"
+       waere falsch. Den Weg erklaert stattdessen der Hinweis. */
+    () => {
+        const proFahrt = z(4, 6), volleFahrten = z(3, 5), rest = z(1, proFahrt - 1);
+        const kinder = volleFahrten * proFahrt + rest;
+        return {
+            text: `Der Fahrstuhl kann ${proFahrt} Kinder mitnehmen. In der Klasse 3b sind ${kinder} Kinder. Wie oft muss der Fahrstuhl fahren, damit alle nach oben kommen?`,
+            antwort: volleFahrten + 1,
+            hinweis: `${kinder} : ${proFahrt} = ${volleFahrten} Rest ${rest}. Für die letzten ${rest} Kinder muss der Fahrstuhl noch einmal fahren.`
         };
     },
     () => {
@@ -396,7 +419,7 @@ const sachaufgabenVorlagen = [
         const murmeln = beutel * proBeutel + rest;
         return {
             text: `Bente hat ${murmeln} Murmeln. In einen Beutel passen ${proBeutel} Murmeln. Wie viele Beutel kann er füllen und wie viele Murmeln bleiben übrig?`,
-            frage: `${murmeln} : ${proBeutel}`,
+            rechnung: `${murmeln} : ${proBeutel}`,
             antwort: beutel,
             rest: rest,
             hinweis: `Teile ${murmeln} durch ${proBeutel} und schau, was übrig bleibt.`
@@ -630,11 +653,11 @@ function naechsteAufgabe() {
     do {
         aufgabe = thema.aufgabe(reihen);
         versuch++;
-    } while (aufgabe.frage === spiel.letzteFrage && versuch < 8);
+    } while (aufgabenKennung(aufgabe) === spiel.letzteFrage && versuch < 8);
 
     aufgabe.thema = thema;
     spiel.aufgabe = aufgabe;
-    spiel.letzteFrage = aufgabe.frage;
+    spiel.letzteFrage = aufgabenKennung(aufgabe);
     spiel.versuche = 1;
     spiel.coachBenutzt = false;
 
@@ -643,7 +666,11 @@ function naechsteAufgabe() {
     textBox.hidden = !aufgabe.text;
     textBox.innerText = aufgabe.text || '';
 
-    document.getElementById('spielFrage').innerText = `${aufgabe.frage} =`;
+    /* Bei Sachaufgaben steht keine Rechnung da - sie zu finden ist ja
+       gerade die Aufgabe. Dann bleibt die Zeile weg. */
+    const frageBox = document.getElementById('spielFrage');
+    frageBox.hidden = !aufgabe.frage;
+    frageBox.innerText = aufgabe.frage ? `${aufgabe.frage} =` : '';
     document.getElementById('spielHinweis').innerText = '';
 
     // Eingabefelder vorbereiten
@@ -663,6 +690,12 @@ function naechsteAufgabe() {
     schliesseCoach();
 
     aktualisiereFortschritt();
+}
+
+/* Woran erkennen wir "dieselbe Aufgabe wie eben"? An der Rechnung -
+   und bei Sachaufgaben, die keine anzeigen, am Text. */
+function aufgabenKennung(aufgabe) {
+    return aufgabe.frage || aufgabe.text || '';
 }
 
 function setzeAktivesFeld(name) {
@@ -736,9 +769,14 @@ function pruefeAntwort() {
 
     spiel.gesamt++;
     aktualisiereFortschritt();
+    /* Bei Sachaufgaben gehört die Rechnung mit in die Auflösung - das
+       Aufstellen ist der Teil, der geübt wird. */
+    const loesung = aufgabe.rechnung
+        ? `${aufgabe.rechnung} = ${aufgabe.antwort}`
+        : `${aufgabe.antwort}`;
     document.getElementById('spielHinweis').innerText = brauchtRest
-        ? `Die Lösung ist ${aufgabe.antwort} Rest ${aufgabe.rest}.`
-        : `Die Lösung ist ${aufgabe.antwort}.`;
+        ? `Die Lösung ist ${loesung} Rest ${aufgabe.rest}.`
+        : `Die Lösung ist ${loesung}.`;
 
     if (spiel.ziel && spiel.gesamt >= spiel.ziel) { setTimeout(endeRunde, 1800); return; }
     setTimeout(naechsteAufgabe, 1800);
