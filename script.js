@@ -176,6 +176,48 @@ const themen = {
         }
     },
 
+    /* ---------- Plus und Minus bis 20 ---------- */
+
+    plus20: {
+        titel: 'Plus bis 20', emoji: '➕ 🔟', hint: 'einstellig dazu, z. B. 8 + 5',
+        gruppe: 'gruppePlusMinus20', farbe: 'farbe-plus-zwanzig',
+        reihen: null,
+        aufgabe: () => {
+            /* Beide Zahlen einstellig und zusammen mehr als 10. Genau 10
+               waere kein Uebergang, sondern nur das Ergaenzen zum Zehner -
+               darum beginnt a erst bei 2 und b erst bei 11 - a. */
+            const a = z(2, 9);
+            const b = z(Math.max(2, 11 - a), 9);
+            const bisZehn = 10 - a;
+            return {
+                frage: `${a} + ${b}`,
+                antwort: a + b,
+                hinweis: `Rechne erst bis zur 10: ${a} + ${bisZehn} = 10.`
+            };
+        },
+        coach: coachPlusUebergang
+    },
+
+    minus20: {
+        titel: 'Minus bis 20', emoji: '➖ 🔟', hint: 'einstellig weg, z. B. 15 − 7',
+        gruppe: 'gruppePlusMinus20', farbe: 'farbe-minus-zwanzig',
+        reihen: null,
+        aufgabe: () => {
+            /* Zwischen 11 und 18 minus einstellig, und der Einer oben ist
+               kleiner als die Zahl, die weggeht - nur dann muss man unter
+               die 10 zurueck. */
+            const e1 = z(1, 8);
+            const b = z(e1 + 1, 9);
+            const a = 10 + e1;
+            return {
+                frage: `${a} − ${b}`,
+                antwort: a - b,
+                hinweis: `Rechne erst bis zur 10 zurück: ${a} − ${e1} = 10.`
+            };
+        },
+        coach: coachMinusUebergang
+    },
+
     /* ---------- Plus und Minus bis 100 ---------- */
 
     plus100: {
@@ -479,6 +521,7 @@ const sachaufgabenVorlagen = [
 /* Reihenfolge der Kacheln je Gruppe. */
 const gruppenReihenfolge = {
     gruppeMalGeteilt: ['einmaleins', 'geteilt', 'geteiltRest'],
+    gruppePlusMinus20: ['plus20', 'minus20'],
     gruppePlusMinus: ['plus100', 'minus100', 'plusZueEiner', 'minusZueEiner', 'plusZue', 'minusZue'],
     gruppeKnobeln: ['sachaufgaben', 'punktVorStrich']
 };

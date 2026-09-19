@@ -12,6 +12,8 @@
     --uebergang: #9C27B0;    /* mit Zehneruebergang  - lila  */
     --uebergang-dunkel: #7B1FA2;
     --uebergang-hell: #BA68C8;
+    --zwanzig: #7E57C2;        /* Zehneruebergang bis 20 - violett */
+    --zwanzig-dunkel: #5E35B1;
     --knobeln: #FF9800;      /* Knobeln              - orange*/
     --knobeln-dunkel: #F57C00;
     --herausforderung: #EC407A; /* Herausforderungen - pink  */
@@ -95,6 +97,10 @@ body {
 .farbe-rest       { background: linear-gradient(135deg, #0288D1, #4FC3F7); }
 .farbe-plus       { background: linear-gradient(135deg, var(--plus), #A5D6A7); }
 .farbe-minus      { background: linear-gradient(135deg, var(--plus-dunkel), #81C784); }
+/* Bis 20 ist die erste Stufe des Zehneruebergangs - eigener,
+   violetter Ton, damit sie sich vom Zahlenraum bis 100 abhebt. */
+.farbe-plus-zwanzig   { background: linear-gradient(135deg, var(--zwanzig), #B39DDB); }
+.farbe-minus-zwanzig  { background: linear-gradient(135deg, var(--zwanzig-dunkel), #9575CD); }
 /* Der Uebergang mit einstelligen Zahlen ist die Vorstufe - gleiches
    Lila, nur heller. */
 .farbe-plus-zue-eins  { background: linear-gradient(135deg, var(--uebergang-hell), #E1BEE7); }
